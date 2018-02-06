@@ -18,15 +18,26 @@ public class task579 {
             if ((Integer.parseInt(line) >= 1) && (Integer.parseInt(line) <= 10000)) {
                 String[] arrayOfDigits = ArrayReader(readBuff);
                 subsequenceArray = GetIndexOfDigits(arrayOfDigits);
-                try (BufferedWriter writeBuff = new BufferedWriter(new FileWriter("src\\com\\round1\\task579\\output.txt", false))) {
-                    writeBuff.write(subsequenceArray.size()+"\n");
-                    for (Integer indexOfDigit:subsequenceArray) {
-                        writeBuff.write(indexOfDigit+" ");
-                        writeBuff.flush();
+                if (subsequenceArray!=null) {
+                    try (BufferedWriter writeBuff = new BufferedWriter(new FileWriter("src\\com\\round1\\task579\\output.txt", false))) {
+                        writeBuff.write(subsequenceArray.size() + "\n");
+                        for (Integer indexOfDigit : subsequenceArray) {
+                            writeBuff.write(indexOfDigit + " ");
+                            writeBuff.flush();
+                        }
+                    }
+                }
+                else{
+                    try (BufferedWriter writeBuff = new BufferedWriter(new FileWriter("src\\com\\round1\\task579\\output.txt", false))) {
+
+                        writeBuff.write("Один из эллементов, по модулю, превосходит 10000");
                     }
                 }
             } else {
-                System.out.println("Натуральное число выходит за пределы  n (1 ≤ n ≤ 10000)");
+                try (BufferedWriter writeBuff = new BufferedWriter(new FileWriter("src\\com\\round1\\task579\\output.txt", false))) {
+
+                    writeBuff.write("Количество эллементов выходит за пределы  n (1 ≤ n ≤ 10000)");
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -45,31 +56,25 @@ public class task579 {
         return readBuff.readLine().split(" ");
     }
     private static ArrayList<Integer> GetIndexOfDigits(String[] arrayOfDigits){
-        ArrayList<Integer> finalyArray = new ArrayList<>();
+        ArrayList<Integer> finalArray;
+        ArrayList<Integer> posArray = new ArrayList<>();
+        ArrayList<Integer> negArray = new ArrayList<>();
         Integer sumOfNeg =0;
         Integer sumOfPos =0;
-            for (String digit:arrayOfDigits) {
-                if(Integer.parseInt(digit)<0){
-                    sumOfNeg+=Integer.parseInt(digit);
+            for (int i=0;i<arrayOfDigits.length;i++) {
+                if(Integer.parseInt(arrayOfDigits[i])<0){
+                    sumOfNeg+=Integer.parseInt(arrayOfDigits[i]);
+                    negArray.add(i);
                 }
-                else if (Integer.parseInt(digit)>0){
-                    sumOfPos+=Integer.parseInt(digit);
+                else if (Integer.parseInt(arrayOfDigits[i])>0 && Math.abs(Integer.parseInt(arrayOfDigits[i]))<10000){
+                    sumOfPos+=Integer.parseInt(arrayOfDigits[i]);
+                    posArray.add(i);
                 }
-            }
-            if (sumOfPos>Math.abs(sumOfNeg)){
-                for (int i=0;i<arrayOfDigits.length;i++) {
-                    if (Integer.parseInt(arrayOfDigits[i])>0){
-                        finalyArray.add(i+1);
-                    }
+                else if(Math.abs(Integer.parseInt(arrayOfDigits[i]))>10000){
+                    return null;
                 }
             }
-            else if (sumOfPos<Math.abs(sumOfNeg)){
-                for (int i=0;i<arrayOfDigits.length;i++) {
-                    if (Integer.parseInt(arrayOfDigits[i])<0){
-                        finalyArray.add(i+1);
-                    }
-                }
-            }
-        return finalyArray;
+            finalArray = (sumOfPos>Math.abs(sumOfNeg))?posArray:negArray;
+        return finalArray;
     }
 }
